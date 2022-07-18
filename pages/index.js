@@ -10,23 +10,17 @@ import Avatar from "components/Avatar"
 
 export default function Home() {
   const [user, setUser] = useState(undefined)
-  // console.log(user)
 
   useEffect(() => {
     onAuthStateChanged((user) => {
       setUser(user)
-      console.log(user)
     })
   }, [])
 
   const handleClick = () => {
-    loginWithGithHub()
-      .then((user) => {
-        setUser(user)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    loginWithGithHub().catch((err) => {
+      console.log(err)
+    })
   }
 
   return (
