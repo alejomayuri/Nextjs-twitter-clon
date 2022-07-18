@@ -1,26 +1,32 @@
-import { useEffect, useState } from 'react'
-import Head from 'next/head'
-import AppLayout from '../components/AppLayout'
-import Button from '../components/Button'
-import GitHub from '../components/Icons/GitHub'
-import { colors } from '../styles/theme'
+import { useEffect, useState } from "react"
+import Head from "next/head"
+import AppLayout from "components/AppLayout"
+import Button from "components/Button"
+import GitHub from "components/Icons/GitHub"
+import { colors } from "styles/theme"
 
-import { loginWithGithHub, onAuthStateChanged } from '../firebase/client'
+import { loginWithGithHub, onAuthStateChanged } from "../firebase/client"
+import Avatar from "components/Avatar"
 
 export default function Home() {
   const [user, setUser] = useState(undefined)
+  // console.log(user)
 
   useEffect(() => {
-    onAuthStateChanged(setUser)
+    onAuthStateChanged((user) => {
+      setUser(user)
+      console.log(user)
+    })
   }, [])
 
   const handleClick = () => {
-    loginWithGithHub().then(user => {
-      const { avatar, username, url } = user
-      setUser(user)
-    }).catch(err => {
-      console.log(err)
-    })
+    loginWithGithHub()
+      .then((user) => {
+        setUser(user)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   return (
@@ -33,24 +39,28 @@ export default function Home() {
 
       <AppLayout>
         <section>
-          <img src='/logo.png' alt='logo' />
+          <img src="/logo.png" alt="logo" />
           <h1>Devter</h1>
-          <h2>Talk about development <br /> with developers</h2>
+          <h2>
+            Talk about development <br /> with developers
+          </h2>
 
           <div>
-            {
-              user === null &&
+            {user === null && (
               <Button onClick={handleClick}>
-                <GitHub fill='#fff' width={24} height={24} />
+                <GitHub fill="#fff" width={24} height={24} />
                 Login with GitHub
               </Button>
-            }
-            {
-              user && user.avatar && <div>
-                <img src={user.avatar} alt='avatar' />
-                <strong>{user.username}</strong>
+            )}
+            {user && user.avatar && (
+              <div>
+                <Avatar
+                  src={user.avatar}
+                  alt={user.username}
+                  text={user.username}
+                />
               </div>
-            }
+            )}
           </div>
         </section>
       </AppLayout>
