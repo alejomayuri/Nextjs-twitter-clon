@@ -1,5 +1,6 @@
 import firebase from "firebase/compat/app"
 import "firebase/compat/auth"
+import "firebase/compat/firestore"
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpezRq7FHV5muaaWboGeLn90n_HqbXHO0",
@@ -12,13 +13,16 @@ const firebaseConfig = {
 
 !firebase.apps.length && firebase.initializeApp(firebaseConfig)
 
+const db = firebase.firestore()
+
 const mapUserFromFirebaseAuthToUser = (user) => {
-  const { displayName, email, photoURL } = user
+  const { displayName, email, photoURL, uid } = user
 
   return {
     avatar: photoURL,
     username: displayName,
     email,
+    uid,
   }
 }
 
@@ -35,4 +39,39 @@ export const loginWithGithHub = () => {
     .auth()
     .signInWithPopup(githubProvider)
     .then(mapUserFromFirebaseAuthToUser)
+}
+
+export const addTwitt = ({ avatar, content, userId, userName }) => {
+  return db.collection("twitts").add({
+    avatar,
+    content,
+    userId,
+    userName,
+    createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+    likesCount: 0,
+    sharedCount: 0,
+  })
+}
+
+export const fetchLatestTwitts = () => {
+  return db
+    .collection("twitts")
+    .get()
+    .then(({ docs }) => {
+      return docs.map((doc) => {
+        const data = doc.data()
+        const id = doc.id
+        const { createdAt } = data
+        const date = new Date(createdAt.seconds * 1000)
+        const normalizedCreatedAt = new Intl.DateTimeFormat("es-ES").format(
+          date
+        )
+
+        return {
+          ...data,
+          id,
+          createdAt: normalizedCreatedAt,
+        }
+      })
+    })
 }

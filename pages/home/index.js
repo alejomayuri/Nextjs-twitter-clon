@@ -2,15 +2,17 @@ import { useEffect, useState } from "react"
 
 import AppLayout from "components/AppLayout"
 import Twit from "components/Twit"
+import useUser from "hooks/useUser"
+import { fetchLatestTwitts } from "../../firebase/client"
 
 export default function HomePage() {
   const [timeline, setTimeline] = useState([])
 
+  const user = useUser()
+
   useEffect(() => {
-    fetch("http://localhost:3000/api/statuses/home_timeline")
-      .then((res) => res.json())
-      .then(setTimeline)
-  }, [])
+    user && fetchLatestTwitts().then((twitts) => setTimeline(twitts))
+  }, [user])
 
   return (
     <>
@@ -19,17 +21,21 @@ export default function HomePage() {
           <h2>Inicio</h2>
         </header>
         <section>
-          {timeline.map(({ id, username, avatar, message }) => {
-            return (
-              <Twit
-                avatar={avatar}
-                id={id}
-                key={id}
-                message={message}
-                username={username}
-              />
-            )
-          })}
+          {timeline.map(
+            ({ createdAt, id, userName, avatar, content, userId }) => {
+              return (
+                <Twit
+                  avatar={avatar}
+                  createdAt={createdAt}
+                  id={id}
+                  key={id}
+                  content={content}
+                  userName={userName}
+                  userId={userId}
+                />
+              )
+            }
+          )}
         </section>
         <nav></nav>
       </AppLayout>
@@ -37,7 +43,8 @@ export default function HomePage() {
       <style jsx>{`
         header {
           align-items: center;
-          border-bottom: 1px solid #ccc;
+          background-color: #ffffff;
+          border-bottom: 1px solid #eee;
           display: flex;
           height: 49px;
           position: sticky;
@@ -48,15 +55,13 @@ export default function HomePage() {
         h2 {
           font-size: 21px;
           font-weight: 800;
-        }
-
-        section {
-          padding-top: 49px;
+          padding-left: 15px;
         }
 
         nav {
+          background-color: #fff;
           bottom: 0;
-          border-top: 1px solid #ccc;
+          border-top: 1px solid #eee;
           height: 49px;
           position: sticky;
           width: 100%;
