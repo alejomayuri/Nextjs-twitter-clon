@@ -33,6 +33,6 @@ yarn-error.log*
 .vercel
 
 # keys
-firebase/firebase-key.json
+/firebase/firebase-key.json
 
 .husky
