@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 
-import AppLayout from "components/AppLayout"
 import Twit from "components/Twit"
 import useUser from "hooks/useUser"
 import { fetchLatestTwitts } from "../../firebase/client"
@@ -22,49 +21,47 @@ export default function HomePage() {
 
   return (
     <>
-      <AppLayout>
-        <Head>
-          <title>Inicio</title>
-        </Head>
-        <header>
-          <h2>Inicio</h2>
-        </header>
-        <section>
-          {timeline.map(
-            ({ createdAt, img, id, userName, avatar, content, userId }) => {
-              return (
-                <Twit
-                  avatar={avatar}
-                  createdAt={createdAt}
-                  id={id}
-                  img={img}
-                  key={id}
-                  content={content}
-                  userName={userName}
-                  userId={userId}
-                />
-              )
-            }
-          )}
-        </section>
-        <nav>
-          <Link href="/home">
-            <a>
-              <Home width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-          <Link href="/search">
-            <a>
-              <Search width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-          <Link href="/compose/tweet">
-            <a>
-              <Create width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-        </nav>
-      </AppLayout>
+      <Head>
+        <title>Inicio</title>
+      </Head>
+      <header>
+        <h2>Inicio</h2>
+      </header>
+      <section>
+        {timeline.map(
+          ({ createdAt, img, id, userName, avatar, content, userId }) => {
+            return (
+              <Twit
+                avatar={avatar}
+                createdAt={createdAt}
+                id={id}
+                img={img}
+                key={id}
+                content={content}
+                userName={userName}
+                userId={userId}
+              />
+            )
+          }
+        )}
+      </section>
+      <nav>
+        <Link href="/home">
+          <a>
+            <Home width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+        <Link href="/search">
+          <a>
+            <Search width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+        <Link href="/compose/tweet">
+          <a>
+            <Create width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+      </nav>
 
       <style jsx>{`
         header {

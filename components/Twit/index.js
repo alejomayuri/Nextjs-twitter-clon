@@ -1,5 +1,9 @@
 import Avatar from "components/Avatar"
 import useTimeAgo from "hooks/useTimeAgo"
+import useDateTimeFormat from "hooks/useDateTimeFormat"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 
 export default function Twit({
   avatar,
@@ -9,18 +13,38 @@ export default function Twit({
   img,
   id,
 }) {
+  const createdAtFormatted = useDateTimeFormat(createdAt)
+  const router = useRouter()
   const timeago = useTimeAgo(createdAt)
+
+  const [timeClient, setTimeClient] = useState(null)
+  const [createdAtFormattedClient, setCreatedAtFormattedClient] = useState(null)
+
+  useEffect(() => {
+    setTimeClient(timeago)
+    setCreatedAtFormattedClient(createdAtFormatted)
+  }, [createdAt])
+
+  const handleArticleClick = (e) => {
+    e.preventDefault()
+    router.push(`/status/${id}`)
+  }
 
   return (
     <>
-      <article>
+      <article onClick={handleArticleClick}>
         <div>
           <Avatar alt={userName} src={avatar} />
         </div>
         <section>
           <header>
             <strong>{userName}</strong>
-            <time>{timeago}</time>
+            <span> &middot; </span>
+            <Link href={`/status/${id}`}>
+              <a>
+                <time title={createdAtFormattedClient}>{timeClient}</time>
+              </a>
+            </Link>
           </header>
           <p>{content}</p>
           {img && <img src={img} alt={content} />}
@@ -32,6 +56,11 @@ export default function Twit({
           border-bottom: 2px solid #eee;
           display: flex;
           padding: 10px 15px;
+        }
+
+        article:hover {
+          background-color: #f5f8fa;
+          cursor: pointer;
         }
 
         img {
@@ -50,10 +79,15 @@ export default function Twit({
           margin: 0;
         }
 
-        time {
+        a {
           color: #555;
-          fotn-size: 14px;
+          font-size: 16px;
           padding-left: 5px;
+          text-decoration: none;
+        }
+
+        a:hover {
+          text-decoration: underline;
         }
       `}</style>
     </>
